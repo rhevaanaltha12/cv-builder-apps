@@ -1,6 +1,6 @@
 import { ensureProtocol, formatDate } from '@/lib/method'
 import { cn } from '@/lib/utils'
-import { ISection } from '@/pages/builder/config/interfaces'
+import { ISection } from '@/features/builder/config/interfaces'
 import { useAppSelector } from '@/store/hook'
 import { ExternalLink } from 'lucide-react'
 import React from 'react'

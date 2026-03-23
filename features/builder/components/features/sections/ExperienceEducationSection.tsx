@@ -1,7 +1,7 @@
 import { formatDate } from '@/lib/method'
 import { cn } from '@/lib/utils'
-import { DUMMY_DATA } from '@/pages/builder/config/constant'
-import { ISection } from '@/pages/builder/config/interfaces'
+import { DUMMY_DATA } from '@/features/builder/config/constant'
+import { ISection } from '@/features/builder/config/interfaces'
 import { useAppSelector } from '@/store/hook'
 import React from 'react'
 

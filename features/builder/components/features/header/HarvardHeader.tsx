@@ -1,4 +1,4 @@
-import { DUMMY_DATA } from '@/pages/builder/config/constant'
+import { DUMMY_DATA } from '@/features/builder/config/constant'
 import { useAppSelector } from '@/store/hook'
 import React from 'react'
 import ContactInfo from '../../shared/ContactInfo'

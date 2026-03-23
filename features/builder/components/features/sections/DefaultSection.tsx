@@ -1,4 +1,4 @@
-import { ISection } from '@/pages/builder/config/interfaces'
+import { ISection } from '@/features/builder/config/interfaces'
 import { useAppSelector } from '@/store/hook'
 import React from 'react'
 import ExperienceEducationSection from './ExperienceEducationSection'

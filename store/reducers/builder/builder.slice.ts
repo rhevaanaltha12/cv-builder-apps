@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../index'
-import { IFontSize, IPersonalInfo, ISection, ITemplate, ITheme } from '@/pages/builder/config/interfaces'
-import { createSectionItem, DEFAULT_SECTION_FONT_SIZE, DEFAULT_TYPOGRAPHY } from '@/pages/builder/config/constant'
-// import { IFontSize, IResumeData } from '@/pages/builder/config/interfaces'
-// import { createSectionItem, DEFAULT_SECTION_FONT_SIZE, DEFAULT_TYPOGRAPHY } from '@/pages/builder/config/constant'
+import { IFontSize, IPersonalInfo, ISection, ITemplate, ITheme } from '@/features/builder/config/interfaces'
+import { createSectionItem, DEFAULT_SECTION_FONT_SIZE, DEFAULT_TYPOGRAPHY } from '@/features/builder/config/constant'
+// import { IFontSize, IResumeData } from '@/features/builder/config/interfaces'
+// import { createSectionItem, DEFAULT_SECTION_FONT_SIZE, DEFAULT_TYPOGRAPHY } from '@/features/builder/config/constant'
 
 interface IState {
    loading: boolean

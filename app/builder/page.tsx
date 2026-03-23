@@ -1,4 +1,4 @@
-import PageMain from '@/pages/builder/PageMain'
+import PageMain from '@/features/builder/PageMain'
 import React from 'react'
 
 const Home = () => {
