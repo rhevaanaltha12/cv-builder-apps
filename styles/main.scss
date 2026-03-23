@@ -1,0 +1,93 @@
+@use './important.scss' as important;
+@use './primeCustom.scss' as prime;
+
+@reference "tailwindcss";
+
+body {
+   @apply antialiased;
+   font-feature-settings: 'cv11', 'ss01';
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography Scale */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+   @apply tracking-tight;
+}
+
+.field {
+   margin-bottom: 16px;
+
+   .field-label {
+      @apply text-xs text-gray-500 font-medium mb-2;
+   }
+
+   input,
+   textarea {
+      @apply w-full;
+   }
+
+   textarea {
+      @apply h-[65px];
+   }
+
+   &.field-checkbox {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      column-gap: 12px;
+      align-items: center;
+
+      // label {
+      //    font-size: 12px !important;
+      //    font-weight: 500 !important;
+      //    margin-bottom: 2px !important;
+      //    color: var.$idx-neutral-70 !important;
+
+      //    &.disabled {
+      //       color: var.$idx-neutral-50 !important;
+      //    }
+      // }
+
+      .field-label {
+         @apply text-xs text-gray-500 font-medium mb-2;
+         &.disabled {
+            @apply text-xs text-gray-500 font-medium mb-2;
+         }
+      }
+
+      &:hover {
+         .p-checkbox-box {
+            @apply border-2 border-sky-500;
+         }
+      }
+
+      .description {
+         font-family: var(--font-jakarta-sans);
+         // color: var.$idx-neutral-60;
+         // font-size: 12px;
+         // line-height: 15px;
+         // margin: 0;
+
+         @apply text-xs m-0 font-semibold;
+
+         a {
+            color: #aaa;
+            text-decoration: none;
+
+            i {
+               margin-left: 4px;
+               font-size: 12px;
+            }
+
+            &:hover {
+               @apply text-sky-500;
+            }
+         }
+      }
+   }
+}

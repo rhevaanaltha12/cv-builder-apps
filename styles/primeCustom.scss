@@ -1,0 +1,286 @@
+@reference "tailwindcss";
+
+.p-btn-prime {
+   @apply cursor-pointer rounded-md justify-center focus:shadow-none flex items-center gap-2;
+
+   .p-button-label {
+      @apply font-normal flex-none;
+   }
+
+   .p-button-icon-left {
+      margin-right: 0;
+   }
+
+   &.p-button-icon-only {
+      @apply h-min w-min;
+      .p-button-label {
+         @apply hidden;
+      }
+   }
+
+   &.solid {
+      &.primary {
+         @apply bg-sky-500 hover:bg-sky-500/90 active:bg-sky-600/90 text-white border-none;
+      }
+      &.danger {
+         @apply bg-red-500 hover:bg-red-500/90 active:bg-red-600/90 text-white border-none;
+      }
+      &.success {
+         @apply bg-green-500 hover:bg-green-500/90 active:bg-green-600/90 text-white border-none;
+      }
+      &.warning {
+         @apply bg-amber-500 hover:bg-amber-500/90 active:bg-amber-600/90 text-white border-none;
+      }
+   }
+
+   &.stroke {
+      &.primary {
+         @apply bg-white border border-sky-500 hover:border-sky-500/90 active:border-sky-600/90 text-sky-500;
+      }
+      &.danger {
+         @apply bg-white border border-red-500 hover:border-red-500/90 active:border-red-600/90 text-red-500;
+      }
+      &.success {
+         @apply bg-white border border-green-500 hover:border-green-500/90 active:border-green-600/90 text-green-500;
+      }
+      &.warning {
+         @apply bg-white border border-amber-500 hover:border-amber-500/90 active:border-amber-600/90 text-amber-500;
+      }
+   }
+
+   &.sm {
+      @apply text-sm py-2 px-4;
+      .p-button-icon {
+         @apply text-sm;
+      }
+
+      &.p-button-icon-only {
+         @apply py-1 px-3;
+      }
+   }
+   &.md {
+      @apply text-base py-2 px-4;
+      .p-button-icon {
+         @apply text-base;
+      }
+      &.p-button-icon-only {
+         @apply py-1 px-3;
+      }
+   }
+   &.lg {
+      @apply text-lg py-2 px-4;
+      .p-button-icon {
+         @apply text-lg;
+      }
+      &.p-button-icon-only {
+         @apply py-1 px-3;
+      }
+   }
+}
+
+.p-component {
+   font-family: var(--font-jakarta-sans);
+}
+
+.p-inputtext {
+   @apply font-normal rounded-sm text-xs p-2 h-9 border border-gray-300 text-gray-700;
+
+   &::placeholder {
+      @apply text-gray-500;
+   }
+   &.p-disabled {
+      @apply bg-gray-100 opacity-[1];
+   }
+
+   &:enabled {
+      &:hover,
+      &:focus {
+         @apply border border-gray-500 shadow-none;
+      }
+   }
+}
+
+.p-inputtext.p-invalid.p-component {
+   @apply border border-red-600;
+}
+
+.p-dropdown {
+   @apply h-9 rounded-sm w-full;
+
+   &:not(.p-disabled) {
+      &:hover {
+         @apply border border-gray-500;
+      }
+      &.p-focus {
+         @apply border border-gray-500 shadow-none;
+      }
+
+      &.p-disabled {
+         @apply border border-gray-200;
+      }
+   }
+
+   &.p-disabled {
+      @apply border border-gray-300 bg-gray-200 opacity-[1];
+   }
+
+   .p-placeholder {
+      @apply text-gray-500;
+   }
+
+   .p-inputtext {
+      @apply border-none;
+   }
+}
+
+.p-dropdown.p-component.p-inputwrapper.p-invalid {
+   @apply border border-red-600;
+}
+
+.p-dropdown-panel {
+   .p-dropdown-header {
+      @apply py-2 px-3;
+   }
+
+   .p-dropdown-items {
+      .p-dropdown-item-group {
+         @apply text-xs font-semibold p-4;
+      }
+      .p-dropdown-item {
+         @apply py-2 px-4 text-xs text-gray-700;
+
+         .p-dropdown-item-label {
+            @apply w-full;
+         }
+         &:hover,
+         &.p-highlight {
+            @apply bg-sky-100 text-sky-500;
+         }
+      }
+      .p-dropdown-empty-message {
+         @apply bg-transparent text-gray-500 text-xs font-normal p-4;
+      }
+   }
+}
+
+.p-calendar {
+   @apply w-full h-9;
+
+   &:not(.p-calendar-disabled).p-focus > .p-inputtext {
+      @apply shadow-none;
+
+      &:hover {
+         @apply border-gray-500;
+
+         .p-inputtext {
+            @apply border-r-white;
+         }
+
+         .p-button {
+            @apply border-gray-500;
+         }
+      }
+   }
+
+   &.p-invalid {
+      .p-inputtext,
+      .p-button {
+         @apply border-red-600;
+      }
+   }
+
+   .p-inputtext {
+      @apply bg-white border-r-0 rounded-tr-none rounded-br-none;
+   }
+
+   .p-button {
+      @apply bg-white border border-gray-300 rounded-sm rounded-tl-none rounded-bl-none text-gray-500;
+   }
+
+   &.p-calendar-disabled {
+      @apply bg-gray-200 opacity-[1];
+      .p-inputtext {
+         @apply bg-gray-100 opacity-[1];
+      }
+   }
+}
+
+.p-datepicker {
+   .p-datepicker-header {
+      .p-datepicker-title {
+         @apply flex gap-2;
+      }
+   }
+}
+
+.p-datepicker table {
+   td {
+      @apply p-1;
+
+      & > span {
+         font-family: var(--font-jakarta-sans);
+         @apply text-xs text-gray-700 h-8 w-8;
+      }
+   }
+   th {
+      @apply p-2;
+      & > span {
+         font-family: var(--font-jakarta-sans);
+         @apply text-sm text-gray-700 h-8 w-8 font-semibold;
+      }
+   }
+}
+
+.p-checkbox {
+   .p-checkbox-box[data-p-highlight='true'] {
+      // border-color: var.$idx-primary-50 !important;
+      // background: var.$idx-primary-50 !important;
+      @apply border border-sky-500 bg-sky-500;
+   }
+
+   &:hover {
+      .p-checkbox-box {
+         @apply border-2 border-sky-500;
+      }
+   }
+}
+
+.ql-editor {
+   &.rendered-editor {
+      @apply p-0;
+
+      ol {
+         @apply p-0;
+      }
+   }
+}
+
+.p-chips {
+   &:not(.p-disabled).p-focus .p-chips-multiple-container {
+      // border-color: var.$idx-neutral-50 !important;
+      // box-shadow: none !important;
+      @apply border-gray-500 shadow-none;
+   }
+
+   @apply w-full;
+   .p-chips-multiple-container {
+      @apply w-full resize-y;
+
+      .p-chips-input-token {
+         @apply p-0;
+         input {
+            // color: var.$idx-neutral-70 !important;
+            @apply text-xs text-gray-700;
+
+            &::placeholder {
+               // color: var.$idx-neutral-50;
+               @apply text-xs text-gray-500;
+            }
+         }
+      }
+
+      .p-chips-token {
+         @apply mt-[-5px] bg-gray-200 text-gray-800;
+      }
+   }
+}
