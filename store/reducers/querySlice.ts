@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../index'
-import { Breadcrumb } from 'idcshared/commons/types'
 
 interface AppState {
    fieldQuery: any
