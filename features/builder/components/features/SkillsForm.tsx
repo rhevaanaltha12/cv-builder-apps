@@ -171,7 +171,7 @@ const SkillsForm: React.FC<{ section: ISection }> = ({ section }) => {
                label="Add New Skill"
                icon={'pi-plus'}
                iconType="prime"
-               className="w-full"
+               // className="w-full"
                size="sm"
                variant="stroke"
                onClick={addNewSkill}

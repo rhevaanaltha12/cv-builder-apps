@@ -1,7 +1,7 @@
 import { formatDate } from '@/lib/method'
-import { DEFAULT_TYPOGRAPHY, GLOBAL_FONT_SCALES, TEMPLATE_FONTS, TYPOGRAPHY_PX } from '../../config/constant'
+import { DEFAULT_TYPOGRAPHY, GLOBAL_FONT_SCALES, TEMPLATE_FONTS } from '../../config/constant'
 import { IResumeData, ISection, ISkill, ITemplateType } from '../../config/interfaces'
-import { Document, Page, Text, View, StyleSheet, Link, Svg, Path, pdf } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Link, pdf } from '@react-pdf/renderer'
 import type { Style } from '@react-pdf/types'
 import TurndownService from 'turndown'
 
@@ -281,71 +281,87 @@ interface ResumePDFProps {
 
 const SPACING = 12
 
-const renderHarvardHeader = (data: IResumeData, fontSize: FontSizes) => (
-   <View style={{ marginBottom: 16, borderBottom: '2 solid #1f2937', paddingBottom: 10, textAlign: 'center' }}>
-      <Text
-         style={{
-            fontSize: fontSize.name,
-            color: '#1f2937',
-            textAlign: 'center',
-            marginBottom: 16,
-            textTransform: 'uppercase',
-            letterSpacing: 2,
-         }}
-      >
-         {data.personalInfo?.fullName || ''}
-      </Text>
-      {data.personalInfo?.summary && (
-         <PDFRichText
-            text={data.personalInfo.summary}
-            fontSize={fontSize.summary}
-            color="#4b5563"
-            themeColor={data.theme.color}
-            style={{ marginBottom: 8 }}
-         />
-      )}
-      <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 12, fontSize: fontSize.itemBody }}>
-         {data.personalInfo?.email && <Text style={{ color: '#4b5563' }}>{data.personalInfo.email}</Text>}
-         {data.personalInfo?.phone && <Text style={{ color: '#4b5563' }}>{data.personalInfo.phone}</Text>}
-         {data.personalInfo?.location && <Text style={{ color: '#4b5563' }}>{data.personalInfo.location}</Text>}
+const renderHarvardHeader = (data: IResumeData, fontSize: FontSizes) => {
+   const color = data.theme.color
+   const taglineText = data.personalInfo?.tagline?.join(' | ') || ''
+   return (
+      <View style={{ marginBottom: 20, borderBottom: '2 solid #1f2937', paddingBottom: 12, textAlign: 'center' }}>
+         <Text
+            style={{
+               fontSize: fontSize.name,
+               fontWeight: 'bold',
+               color: color,
+               textAlign: 'center',
+               marginBottom: 16,
+               textTransform: 'uppercase',
+               letterSpacing: 2,
+            }}
+         >
+            {data.personalInfo?.fullName || ''}
+         </Text>
+         {taglineText.trim().length > 0 && (
+            <Text style={{ fontSize: fontSize.tagline, color: '#6b7280', textAlign: 'center', marginBottom: 8 }}>
+               {taglineText}
+            </Text>
+         )}
+
+         {data.personalInfo?.summary && (
+            <PDFRichText
+               text={data.personalInfo.summary}
+               fontSize={fontSize.summary}
+               color="#4b5563"
+               themeColor={color}
+               style={{ marginBottom: 8 }}
+            />
+         )}
+         <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 12, fontSize: fontSize.itemBody }}>
+            {data.personalInfo?.email && <Text style={{ color: '#4b5563' }}>{data.personalInfo.email}</Text>}
+            {data.personalInfo?.phone && <Text style={{ color: '#4b5563' }}>{data.personalInfo.phone}</Text>}
+            {data.personalInfo?.location && <Text style={{ color: '#4b5563' }}>{data.personalInfo.location}</Text>}
+         </View>
+
+         <View
+            style={{
+               flexDirection: 'row',
+               justifyContent: 'center',
+               flexWrap: 'wrap',
+               gap: 12,
+               fontSize: fontSize.itemBody,
+               marginTop: 4,
+            }}
+         >
+            {data.personalInfo?.linkedin && (
+               <Link src={data.personalInfo.linkedin} style={{ color: '#4b5563' }}>
+                  LinkedIn
+               </Link>
+            )}
+            {data.personalInfo?.github && (
+               <Link src={data.personalInfo.github} style={{ color: '#4b5563' }}>
+                  GitHub
+               </Link>
+            )}
+            {data.personalInfo?.website && (
+               <Link src={data.personalInfo.website} style={{ color: '#4b5563' }}>
+                  Portfolio
+               </Link>
+            )}
+         </View>
       </View>
-      <View
-         style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: 12,
-            fontSize: fontSize.itemBody,
-            marginTop: 4,
-         }}
-      >
-         {data.personalInfo?.linkedin && (
-            <Link src={data.personalInfo.linkedin} style={{ color: '#4b5563' }}>
-               LinkedIn
-            </Link>
-         )}
-         {data.personalInfo?.github && (
-            <Link src={data.personalInfo.github} style={{ color: '#4b5563' }}>
-               GitHub
-            </Link>
-         )}
-         {data.personalInfo?.website && (
-            <Link src={data.personalInfo.website} style={{ color: '#4b5563' }}>
-               Portfolio
-            </Link>
-         )}
-      </View>
-   </View>
-)
+   )
+}
 
 const renderTechHeader = (data: IResumeData, fontSize: FontSizes) => {
    const color = data.theme.color
    return (
-      <View style={{ marginBottom: 16 }}>
-         <Text style={{ fontSize: fontSize.name, color: color, marginBottom: 16 }}>{data.personalInfo?.fullName || ''}</Text>
+      <View style={{ marginBottom: 20 }}>
+         <Text style={{ fontSize: fontSize.name, fontWeight: 'bold', color: color, marginBottom: 16 }}>
+            {data.personalInfo?.fullName || ''}
+         </Text>
+
          <Text style={{ fontSize: fontSize.tagline, color: '#6b7280', marginBottom: 8 }}>
             {data.personalInfo?.tagline.map((tg) => tg)?.join(' | ') || ''}
          </Text>
+
          {data.personalInfo?.summary && (
             <PDFRichText
                text={data.personalInfo.summary}
@@ -355,7 +371,8 @@ const renderTechHeader = (data: IResumeData, fontSize: FontSizes) => {
                style={{ marginBottom: 8 }}
             />
          )}
-         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, fontSize: fontSize.itemBody }}>
+
+         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, fontSize: fontSize.itemBody, marginTop: 8 }}>
             {data.personalInfo?.email && <Text style={{ color: '#4b5563' }}>{data.personalInfo.email}</Text>}
             {data.personalInfo?.phone && <Text style={{ color: '#4b5563' }}>{data.personalInfo.phone}</Text>}
             {data.personalInfo?.location && <Text style={{ color: '#4b5563' }}>{data.personalInfo.location}</Text>}
@@ -389,7 +406,7 @@ const renderMinimalHeader = (data: IResumeData, fontSize: FontSizes) => (
             fontWeight: 'light',
             color: '#1f2937',
             textAlign: 'center',
-            marginBottom: 6,
+            marginBottom: 8,
             letterSpacing: 1,
          }}
       >
@@ -487,13 +504,15 @@ const getTemplateColors = (template: ITemplateType, color: string) => {
 const renderSectionTitle = (title: string, template: ITemplateType, color: string, sectionHeadingSize: number = 12) => {
    switch (template) {
       case 'harvard':
+         // Bold, uppercase, border-b border-gray-900 pb-1 — matches SectionTitle.tsx
          return (
             <Text
                style={{
                   fontSize: sectionHeadingSize,
+                  fontWeight: 'bold',
                   color: '#1f2937',
-                  borderBottom: '1 solid #1f2937',
-                  paddingBottom: 6,
+                  borderBottom: '1 solid #111827',
+                  paddingBottom: 4,
                   marginBottom: 8,
                   textTransform: 'uppercase',
                   letterSpacing: 1,
@@ -503,24 +522,26 @@ const renderSectionTitle = (title: string, template: ITemplateType, color: strin
             </Text>
          )
       case 'tech':
+         // Colored title, NO border — matches live preview SectionTitle (tech branch)
          return (
             <Text
                style={{
                   fontSize: sectionHeadingSize,
+                  fontWeight: 'bold',
                   color: color,
                   marginBottom: 8,
-                  borderBottom: '1 solid #4b5563',
-                  paddingBottom: 6,
                }}
             >
                {title}
             </Text>
          )
       default:
+         // Minimal: uppercase, gray-400, smaller, letter-spaced — matches SectionTitle.tsx isMinimal branch
          return (
             <Text
                style={{
                   fontSize: Math.round(sectionHeadingSize * 0.85),
+                  fontWeight: 'bold',
                   color: '#9ca3af',
                   marginBottom: 6,
                   textTransform: 'uppercase',
@@ -548,12 +569,28 @@ const DEFAULT_FONT_SIZES = {
 const renderSkills = (data: IResumeData, skills: ISkill[], template: ITemplateType, color: string) => {
    if (!skills || skills.length === 0) return null
    const fontSize = getFontSizes(data)
+
+   // Per-template skill styling — mirrors SkillsSection.tsx logic
+   const getNameStyle = (): Style => {
+      if (template === 'harvard') return { fontSize: fontSize.itemSubtitle, fontWeight: 'bold', color: '#111827' }
+      if (template === 'tech') return { fontSize: fontSize.itemSubtitle, fontWeight: 'bold', color: color }
+      // minimal
+      return { fontSize: fontSize.itemSubtitle, fontWeight: 'bold', color: '#4b5563' }
+   }
+
+   const getValueStyle = (): Style => {
+      if (template === 'harvard') return { fontSize: fontSize.itemSubtitle, color: '#4b5563' }
+      if (template === 'tech') return { fontSize: fontSize.itemSubtitle, color: color }
+      // minimal
+      return { fontSize: fontSize.itemSubtitle, color: '#6b7280' }
+   }
+
    return (
       <View>
          {skills.map((skill, idx) => (
-            <View key={idx} style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-               <Text style={{ fontSize: 10, color: '#1f2937' }}>{skill.name}:</Text>
-               <Text style={{ fontSize: 10, color: '#4b5563' }}>{skill.skillList.map((sl) => sl).join(', ')}</Text>
+            <View key={idx} style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 3 }}>
+               <Text style={getNameStyle()}>{skill.name}:</Text>
+               <Text style={getValueStyle()}>{skill.skillList.join(', ')}</Text>
             </View>
          ))}
       </View>
@@ -565,7 +602,6 @@ const renderFullSkillsSection = (data: IResumeData, section: ISection, template:
    if (!item) return null
 
    const plainSkills = item.skills || []
-
    const hasPlainSkills = plainSkills.length > 0
 
    return <View>{hasPlainSkills && <View>{renderSkills(data, plainSkills, template, color)}</View>}</View>
@@ -617,6 +653,7 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
       const colors = getTemplateColors(template, color)
 
       switch (section.type) {
+         // ── EXPERIENCE ────────────────────────────────────────────────────────────
          case 'experience':
             return (
                <View style={baseStyles.section} key={section.id}>
@@ -629,26 +666,35 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                                  flexDirection: 'row',
                                  justifyContent: 'space-between',
                                  alignItems: 'flex-start',
+                                 marginBottom: 1,
+                              }}
+                           >
+                              <Text style={{ flex: 1, fontSize: fontSize.itemTitle, fontWeight: 'bold', color: colors.title }}>
+                                 {item.company || item.subtitle || ''}
+                              </Text>
+                              <Text
+                                 style={{ fontSize: fontSize.itemDate, color: colors.date, fontStyle: 'italic', marginLeft: 8 }}
+                              >
+                                 {formatDate(item.startDate, item.endDate, item.current)}
+                              </Text>
+                           </View>
+
+                           <View
+                              style={{
+                                 flexDirection: 'row',
+                                 justifyContent: 'space-between',
+                                 alignItems: 'center',
                                  marginBottom: 2,
                               }}
                            >
-                              <View style={{ flex: 1 }}>
-                                 <Text
-                                    style={{
-                                       fontSize: fontSize.itemTitle,
-                                       color: colors.title,
-                                       marginBottom: 2,
-                                    }}
-                                 >
-                                    {item.company || item.subtitle || ''}
-                                 </Text>
-                                 <Text style={{ fontSize: fontSize.itemSubtitle, color: colors.subtitle }}>
-                                    {item.position || item.title || ''}
-                                 </Text>
-                              </View>
-                              <Text style={{ fontSize: fontSize.itemDate, color: colors.date, fontStyle: 'italic' }}>
-                                 {formatDate(item.startDate, item.endDate, item.current)}
+                              <Text style={{ fontSize: fontSize.itemSubtitle, color: colors.subtitle }}>
+                                 {item.position || item.title || ''}
                               </Text>
+                              {item.location ? (
+                                 <Text style={{ fontSize: fontSize.itemDate, color: colors.date, fontStyle: 'italic' }}>
+                                    {item.location}
+                                 </Text>
+                              ) : null}
                            </View>
                            {item.description && (
                               <PDFRichText
@@ -656,7 +702,7 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                                  fontSize={fontSize.itemBody}
                                  color="#4b5563"
                                  themeColor={color}
-                                 style={{ marginTop: 4 }}
+                                 style={{ marginTop: 2 }}
                               />
                            )}
                         </View>
@@ -666,6 +712,8 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                   )}
                </View>
             )
+
+         // ── EDUCATION ────────────────────────────────────────────────────────────
          case 'education':
             return (
                <View style={baseStyles.section} key={section.id}>
@@ -678,20 +726,35 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                                  flexDirection: 'row',
                                  justifyContent: 'space-between',
                                  alignItems: 'flex-start',
+                                 marginBottom: 1,
+                              }}
+                           >
+                              <Text style={{ flex: 1, fontSize: fontSize.itemTitle, fontWeight: 'bold', color: colors.title }}>
+                                 {item.institution || item.subtitle || ''}
+                              </Text>
+                              <Text
+                                 style={{ fontSize: fontSize.itemDate, color: colors.date, fontStyle: 'italic', marginLeft: 8 }}
+                              >
+                                 {formatDate(item.startDate, item.endDate)}
+                              </Text>
+                           </View>
+
+                           <View
+                              style={{
+                                 flexDirection: 'row',
+                                 justifyContent: 'space-between',
+                                 alignItems: 'center',
                                  marginBottom: 2,
                               }}
                            >
-                              <View style={{ flex: 1 }}>
-                                 <Text style={{ fontSize: fontSize.itemTitle, marginBottom: 2, color: colors.title }}>
-                                    {item.institution || item.subtitle || ''}
-                                 </Text>
-                                 <Text style={{ fontSize: fontSize.itemSubtitle, color: colors.subtitle }}>
-                                    {item.degree || item.title || ''}
-                                 </Text>
-                              </View>
-                              <Text style={{ fontSize: fontSize.itemDate, color: colors.date, fontStyle: 'italic' }}>
-                                 {formatDate(item.startDate, item.endDate)}
+                              <Text style={{ fontSize: fontSize.itemSubtitle, color: colors.subtitle }}>
+                                 {item.degree || item.title || ''}
                               </Text>
+                              {item.location ? (
+                                 <Text style={{ fontSize: fontSize.itemDate, color: colors.date, fontStyle: 'italic' }}>
+                                    {item.location}
+                                 </Text>
+                              ) : null}
                            </View>
                            {item.description && (
                               <PDFRichText
@@ -699,7 +762,7 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                                  fontSize={fontSize.itemBody}
                                  color="#4b5563"
                                  themeColor={color}
-                                 style={{ marginTop: 4 }}
+                                 style={{ marginTop: 2 }}
                               />
                            )}
                         </View>
@@ -709,6 +772,8 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                   )}
                </View>
             )
+
+         // ── SKILLS ───────────────────────────────────────────────────────────────
          case 'skills':
             return (
                <View style={baseStyles.section} key={section.id}>
@@ -716,19 +781,124 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                   {renderFullSkillsSection(data, section, template, color) || <View style={{ height: 20 }} />}
                </View>
             )
+
+         // ── PROJECTS ─────────────────────────────────────────────────────────────
+         // Mirrors ProjectSection.tsx: projectName as title, projectUrl as link,
+         // projectSkills as tags, description as rich text
+         case 'projects':
+            return (
+               <View style={baseStyles.section} key={section.id}>
+                  {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
+                  {realItems.map((item) => {
+                     // Per-template link colour — matches ProjectSection.tsx:
+                     //   Harvard → neutral gray (no accent on links)
+                     //   Tech / Minimal → theme accent colour
+                     const linkColor = template === 'harvard' ? colors.title : color
+
+                     // Per-template tag colour — mirrors ProjectSection.tsx tag nodes:
+                     // Harvard and Minimal both use muted gray; Tech uses accent
+                     const tagColor = template === 'tech' ? color : '#6b7280'
+
+                     // Per-template description colour
+                     const descColor = template === 'harvard' ? '#6b7280' : '#4b5563'
+
+                     return (
+                        <View key={item.id} style={{ marginBottom: 10 }}>
+                           {/* Row: project name / link  +  date */}
+                           <View
+                              style={{
+                                 flexDirection: 'row',
+                                 justifyContent: 'space-between',
+                                 alignItems: 'flex-start',
+                                 marginBottom: 2,
+                              }}
+                           >
+                              <View style={{ flex: 1 }}>
+                                 {item.projectUrl ? (
+                                    <Link
+                                       src={item.projectUrl.startsWith('http') ? item.projectUrl : `https://${item.projectUrl}`}
+                                       style={{
+                                          fontSize: fontSize.itemTitle,
+                                          fontWeight: 'bold',
+                                          color: linkColor,
+                                          textDecoration: 'none',
+                                       }}
+                                    >
+                                       {item.projectName || item.title || ''}
+                                    </Link>
+                                 ) : (
+                                    <Text style={{ fontSize: fontSize.itemTitle, fontWeight: 'bold', color: colors.title }}>
+                                       {item.projectName || item.title || ''}
+                                    </Text>
+                                 )}
+                              </View>
+                              {(item.startDate || item.endDate) && (
+                                 <Text
+                                    style={{
+                                       fontSize: fontSize.itemDate,
+                                       color: colors.date,
+                                       fontStyle: 'italic',
+                                       marginLeft: 8,
+                                    }}
+                                 >
+                                    {formatDate(item.startDate, item.endDate)}
+                                 </Text>
+                              )}
+                           </View>
+
+                           {/* Tech skills / tags — dot-separated, template-aware colour */}
+                           {item.projectSkills && item.projectSkills.length > 0 && (
+                              <Text style={{ fontSize: fontSize.itemBody - 1, color: tagColor, marginBottom: 2 }}>
+                                 {item.projectSkills.join(' · ')}
+                              </Text>
+                           )}
+
+                           {/* Description — template-aware colour */}
+                           {item.description && (
+                              <PDFRichText
+                                 text={item.description}
+                                 fontSize={fontSize.itemBody}
+                                 color={descColor}
+                                 themeColor={color}
+                                 style={{ marginTop: 2 }}
+                              />
+                           )}
+                        </View>
+                     )
+                  })}
+               </View>
+            )
+
+         // ── CERTIFICATIONS & CUSTOM ───────────────────────────────────────────────
          default:
             return (
                <View style={baseStyles.section} key={section.id}>
                   {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
                   {realItems.map((item) => (
                      <View key={item.id} style={{ marginBottom: 8 }}>
-                        {item.title && (
-                           <Text style={{ fontSize: fontSize.itemTitle, fontWeight: 'bold', color: colors.title }}>
-                              {item.title}
+                        <View
+                           style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'flex-start',
+                              marginBottom: 1,
+                           }}
+                        >
+                           <Text style={{ flex: 1, fontSize: fontSize.itemTitle, fontWeight: 'bold', color: colors.title }}>
+                              {item.title || ''}
                            </Text>
-                        )}
+                           {item.startDate && (
+                              <Text
+                                 style={{ fontSize: fontSize.itemDate, color: colors.date, fontStyle: 'italic', marginLeft: 8 }}
+                              >
+                                 {formatDate(item.startDate, item.endDate)}
+                              </Text>
+                           )}
+                        </View>
                         {item.subtitle && (
-                           <Text style={{ fontSize: fontSize.itemSubtitle, color: colors.subtitle }}>{item.subtitle}</Text>
+                           <Text style={{ fontSize: fontSize.itemSubtitle, color: colors.subtitle, marginBottom: 1 }}>
+                              {item.subtitle}
+                           </Text>
                         )}
                         {item.description && (
                            <PDFRichText
@@ -769,7 +939,6 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
    return (
       <Document>
          <Page size="A4" style={pageStyle}>
-            {/* Full-page background wrapper for template-specific colors */}
             <View
                style={{
                   position: 'absolute',

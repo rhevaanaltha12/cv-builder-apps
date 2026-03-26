@@ -82,30 +82,20 @@ const PersonalInfo = () => {
          <div className="py-4">
             <div>Personal Information</div>
          </div>
-         {isHarvard ? (
+         <div className="grid grid-cols-2 gap-x-4">
             <FieldText
                label="Full Name"
                name="p_fullname"
                placeholder="Input Full Name"
                onChange={(e: any) => onChange(e, 'fullName')}
             />
-         ) : (
-            <div className="grid grid-cols-2 gap-x-4">
-               <FieldText
-                  label="Full Name"
-                  name="p_fullname"
-                  placeholder="Input Full Name"
-                  onChange={(e: any) => onChange(e, 'fullName')}
-               />
-               <FieldChip
-                  name={`p_tagline`}
-                  label="Tagline"
-                  placeholder="Input Tagline"
-                  onChange={(e: any) => onChange(e, 'tagline')}
-               />
-            </div>
-         )}
-
+            <FieldChip
+               name={`p_tagline`}
+               label="Tagline"
+               placeholder="Input Tagline"
+               onChange={(e: any) => onChange(e, 'tagline')}
+            />
+         </div>
          <FieldTextArea
             label="Job Description"
             name="p_job_title"

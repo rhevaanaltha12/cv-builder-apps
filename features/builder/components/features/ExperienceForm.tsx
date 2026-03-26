@@ -29,33 +29,28 @@ const ExperienceForm: React.FC<{ section: ISection }> = ({ section }) => {
 
    const { watch, setValue } = RHF
 
-   const renderSection = (id: string, key: string, idx: number, values: any) => {
-      const newSections = sections.map((item) => {
-         if (item?.id === id) {
-            return {
-               ...item,
-               items: item?.items?.map((value: any, itemIdx: number) => {
-                  if (itemIdx === idx) {
-                     if (key === 'current' && value) {
-                        return {
-                           ...value,
-                           current: values,
-                           endDate: '',
-                        }
-                     }
-                     return {
-                        ...value,
-                        [key]: values,
-                     }
-                  }
-                  return value
-               }),
-            }
-         }
-         return item
-      })
+   const renderSection = (sectionId: string, key: keyof ISectionItem, idx: number, values: any) => {
+      return sections.map((section) => {
+         if (section.id !== sectionId) return section
 
-      return newSections
+         return {
+            ...section,
+            items: section.items.map((item: any, itemIdx: number) => {
+               if (itemIdx !== idx) return item
+
+               if (key === 'current') {
+                  const isCurrent = Boolean(values)
+                  return {
+                     ...item,
+                     current: values,
+                     ...(isCurrent ? { endDate: '' } : {}),
+                  }
+               }
+
+               return { ...item, [key]: values }
+            }),
+         }
+      })
    }
 
    const onSectionChange = (e: any, id: string, key: any, idx: number, isDate: boolean = false) => {
@@ -165,7 +160,7 @@ const ExperienceForm: React.FC<{ section: ISection }> = ({ section }) => {
                label="Add Experience"
                icon={'pi-plus'}
                iconType="prime"
-               className="w-full"
+               // className="w-full"
                size="sm"
                variant="stroke"
                onClick={() => dispatch(addNewSection(section.id))}
