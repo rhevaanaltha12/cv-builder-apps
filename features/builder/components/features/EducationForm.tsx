@@ -1,5 +1,4 @@
 'use client'
-import { Trash2, Plus } from 'lucide-react'
 import { ISection, ISectionItem } from '../../config/interfaces'
 import { useAppDispatch, useAppSelector } from '@/store/hook'
 import { addNewSection, removeSectionItem, setSection } from '@/store/reducers/builder/builder.slice'
@@ -7,9 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import FieldText from '@/components/Form/FieldText'
 import Button from '@/components/Button'
 import FieldDatePicker from '@/components/Form/FieldDatePicker'
-import FieldCheckbox from '@/components/Form/FieldCheckbox'
 import { dateToFormat } from '@/lib/date'
-import { useEffect, useState } from 'react'
 import { Editor } from 'primereact/editor'
 
 interface IForm {
@@ -17,11 +14,8 @@ interface IForm {
 }
 
 const EducationForm: React.FC<{ section: ISection }> = ({ section }) => {
-   const [text, setText] = useState('')
    const dispatch = useAppDispatch()
-   const { personalInfo, sections } = useAppSelector((state) => state.builderReducer)
-
-   const [check, setCheck] = useState(false)
+   const { sections } = useAppSelector((state) => state.builderReducer)
 
    const RHF = useForm<IForm>({
       defaultValues: {
@@ -29,7 +23,7 @@ const EducationForm: React.FC<{ section: ISection }> = ({ section }) => {
       },
    })
 
-   const { watch, setValue } = RHF
+   const { watch } = RHF
 
    const renderSection = (sectionId: string, key: keyof ISectionItem, idx: number, values: any) => {
       return sections.map((section) => {
@@ -85,7 +79,7 @@ const EducationForm: React.FC<{ section: ISection }> = ({ section }) => {
             {section.items.map((item, idx) => (
                <div key={item.id} className="flex gap-2">
                   <div className="border border-gray-300 w-full p-6 rounded-md">
-                     <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FieldText
                            name={`p_section.${idx}.degree`}
                            label="Degree"
@@ -105,7 +99,7 @@ const EducationForm: React.FC<{ section: ISection }> = ({ section }) => {
                         placeholder="Input Location"
                         onChange={(e: any) => onSectionChange(e, section.id, 'location', idx)}
                      />
-                     <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FieldDatePicker
                            name={`p_section.${idx}.startDate`}
                            label="Start Date"
@@ -126,7 +120,7 @@ const EducationForm: React.FC<{ section: ISection }> = ({ section }) => {
                      </div>
                      <div className="card">
                         <Editor
-                           value={text}
+                           value={item.description || ''}
                            onTextChange={(e: any) => onSectionChange(e, section.id, 'description', idx)}
                            style={{ height: '180px' }}
                         />

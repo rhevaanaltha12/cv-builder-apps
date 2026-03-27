@@ -108,9 +108,12 @@ const ProjectSection = ({ section }: { section: ISection }) => {
       return (
          <div key={item.id} className="mb-3">
             {/* Row 1: project name / link + date */}
-            <div className="flex justify-between items-baseline gap-3 mb-0.5">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-baseline gap-1 sm:gap-3 mb-0.5">
                <div className="flex items-center min-w-0">{nameNode}</div>
-               <span className={cn('italic whitespace-nowrap shrink-0', dateClass)} style={{ fontSize: globalFontSize.itemDate }}>
+               <span
+                  className={cn('italic sm:whitespace-nowrap shrink-0', dateClass)}
+                  style={{ fontSize: globalFontSize.itemDate }}
+               >
                   {formatDate(item.startDate, item.endDate) || ''}
                </span>
             </div>

@@ -112,7 +112,7 @@ const Footer = () => {
             </div>
 
             <div className="pt-10 border-t border-gray-200/50 flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-gray-400">
-               <div>© {currentYear} AI Resume Builder. All rights reserved.</div>
+               <div className="text-center">© {currentYear} Rheva Analtha | AI Resume Builder. All rights reserved.</div>
                <div className="flex items-center gap-1 leading-none">
                   Made with <Heart size={14} className="text-rose-500 fill-rose-500 mx-0.5" /> for the community.
                </div>

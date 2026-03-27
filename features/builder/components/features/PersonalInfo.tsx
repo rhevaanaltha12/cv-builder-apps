@@ -83,7 +83,7 @@ const PersonalInfo = () => {
          <div className="py-4">
             <div>Personal Information</div>
          </div>
-         <div className="grid grid-cols-2 gap-x-4">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
             <FieldText
                label="Full Name"
                name="p_fullname"
@@ -97,10 +97,11 @@ const PersonalInfo = () => {
                onChange={(e: any) => onChange(e, 'tagline')}
             />
          </div>
-         <div className="flex justify-between items-center py-2 mt-4">
+         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-y-2 py-2 mt-4">
             <div className="text-sm font-medium">Professional Summary</div>
             <AIActionButton
                label="Generate Summary"
+               className="w-full sm:w-auto"
                prompt={`Generate a professional resume summary for a ${RHF.getValues('p_job_title') || 'professional'}. Keep it concise (2-3 sentences) and impactful.`}
                onSuccess={(response: string) => {
                   RHF.setValue('p_job_title', response)
@@ -114,7 +115,7 @@ const PersonalInfo = () => {
             placeholder="Input Professional Summary"
             onChange={(e: any) => onChange(e, 'summary')}
          />
-         <div className="grid grid-cols-2 gap-x-4">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
             <FieldText label="Email" name="p_email" placeholder="Input Email" onChange={(e: any) => onChange(e, 'email')} />
             <FieldText
                label="Phone Number"

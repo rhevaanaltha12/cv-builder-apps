@@ -63,16 +63,19 @@ const CertificationSection = ({ section }: { section: ISection }) => {
 
    return itemsToRender.map((item) => (
       <div key={item.id} className={cn('mb-2', isDummy && 'opacity-60')}>
-         <div className="flex justify-between items-baseline">
+         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-0.5 gap-y-1">
             <h3 className={cn('font-bold leading-snug', titleColorClass)} style={{ fontSize: globalFontSize.itemTitle }}>
                {item.title || <span className="text-gray-400 italic font-normal">Certification Name</span>}
             </h3>
 
-            <span className={cn('italic ml-4 whitespace-nowrap', dateClass)} style={{ fontSize: globalFontSize.itemDate }}>
+            <span className={cn('italic sm:ml-4 whitespace-nowrap', dateClass)} style={{ fontSize: globalFontSize.itemDate }}>
                {item.startDate ? formatDate(item.startDate) : 'Date'}
             </span>
          </div>
-         <div className="flex justify-between items-center" style={{ fontSize: globalFontSize.itemSubtitle }}>
+         <div
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-y-1"
+            style={{ fontSize: globalFontSize.itemSubtitle }}
+         >
             <span
                className={cn('leading-snug', subtitleBaseClass)}
                style={applyThemeSubtitleColor ? { color: theme.color } : undefined}

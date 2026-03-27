@@ -1,5 +1,4 @@
 'use client'
-import { Trash2, Plus } from 'lucide-react'
 import { ISection, ISectionItem } from '../../config/interfaces'
 import { useAppDispatch, useAppSelector } from '@/store/hook'
 import { addNewSection, removeSectionItem, setSection } from '@/store/reducers/builder/builder.slice'
@@ -7,12 +6,10 @@ import { FormProvider, useForm } from 'react-hook-form'
 import FieldText from '@/components/Form/FieldText'
 import Button from '@/components/Button'
 import FieldDatePicker from '@/components/Form/FieldDatePicker'
-import FieldCheckbox from '@/components/Form/FieldCheckbox'
 import { dateToFormat } from '@/lib/date'
-import { useEffect, useState } from 'react'
+import React from 'react'
 import { Editor } from 'primereact/editor'
 import FieldChip from '@/components/Form/FieldChip'
-import React from 'react'
 import { debounce } from 'lodash'
 
 interface IForm {
@@ -20,11 +17,8 @@ interface IForm {
 }
 
 const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
-   const [text, setText] = useState('')
    const dispatch = useAppDispatch()
-   const { personalInfo, sections } = useAppSelector((state) => state.builderReducer)
-
-   const [check, setCheck] = useState(false)
+   const { sections } = useAppSelector((state) => state.builderReducer)
 
    const RHF = useForm<IForm>({
       defaultValues: {
@@ -32,7 +26,7 @@ const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
       },
    })
 
-   const { watch, setValue } = RHF
+   const { watch } = RHF
 
    const renderSection = (sectionId: string, key: keyof ISectionItem, idx: number, values: any) => {
       return sections.map((section) => {
@@ -63,7 +57,7 @@ const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
          debounce((section) => {
             dispatch(setSection(section))
          }, 300),
-      [personalInfo, sections]
+      [sections]
    )
 
    const onSectionChange = (e: any, id: string, key: any, idx: number, isDate: boolean = false) => {
@@ -115,7 +109,7 @@ const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
                         placeholder="Input Technologies"
                         onChange={(e: any) => onSectionChange(e, section.id, 'projectSkills', idx)}
                      />
-                     <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FieldDatePicker
                            name={`p_section.${idx}.startDate`}
                            label="Start Date"
@@ -136,7 +130,7 @@ const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
                      </div>
                      <div className="card">
                         <Editor
-                           value={text}
+                           value={item.description || ''}
                            onTextChange={(e: any) => onSectionChange(e, section.id, 'description', idx)}
                            style={{ height: '180px' }}
                         />
@@ -151,9 +145,6 @@ const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
                      onClick={() => dispatch(removeSectionItem({ sectionId: section?.id, itemId: item?.id }))}
                   />
                </div>
-               // <div key={item.id} className="border-l-2 border-blue-500/30 pl-4 space-y-3 py-2">
-               //    hello
-               // </div>
             ))}
 
             <Button
@@ -164,14 +155,6 @@ const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
                variant="stroke"
                onClick={() => dispatch(addNewSection(section.id))}
             />
-
-            {/* <button
-            // onClick={() => addSectionItem(section.id)}
-            className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-2 transition-colors cursor-pointer border border-sky-500"
-         >
-            <Plus className="w-4 h-4" />
-            Add Experience
-         </button> */}
          </div>
       </FormProvider>
    )

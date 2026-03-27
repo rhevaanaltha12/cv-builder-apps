@@ -63,7 +63,7 @@ const CertificationForm: React.FC<{ section: ISection }> = ({ section }) => {
             {section.items.map((item, idx) => (
                <div key={item.id} className="flex gap-2">
                   <div className="border border-gray-300 w-full p-6 rounded-md">
-                     <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FieldText
                            name={`p_section.${idx}.title`}
                            label="Certification Name"
@@ -77,7 +77,7 @@ const CertificationForm: React.FC<{ section: ISection }> = ({ section }) => {
                            onChange={(e: any) => onSectionChange(e, section.id, 'subtitle', idx)}
                         />
                      </div>
-                     <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FieldDatePicker
                            name={`p_section.${idx}.startDate`}
                            label="Date Issued"

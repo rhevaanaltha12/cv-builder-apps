@@ -12,7 +12,7 @@ const DefaultLayout = forwardRef((_, ref: any) => {
    } = useAppSelector((state) => state.builderReducer)
 
    return (
-      <div ref={ref} className={cn('w-full h-full p-8', isHarvard ? 'font-serif' : 'font-sans')}>
+      <div ref={ref} className={cn('w-full p-8', isHarvard ? 'font-serif' : 'font-sans')}>
          <DefaultHeader />
          {sections.map((section) => (
             <div key={section.id} className="mb-4">

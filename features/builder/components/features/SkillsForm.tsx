@@ -139,7 +139,7 @@ const SkillsForm: React.FC<{ section: ISection }> = ({ section }) => {
          <div className="space-y-4">
             {skills.map((item, idx) => (
                <div key={idx} className="flex gap-2 items-center">
-                  <div className="grid grid-cols-2 gap-4 w-full">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                      <FieldText
                         name={`p_section.${idx}.name`}
                         label="Skill Category"
