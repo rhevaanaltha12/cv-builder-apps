@@ -4,6 +4,7 @@ import './globals.css'
 import '@/styles/main.scss'
 import PrimeReactContainer from '@/components/PrimeReactContainer'
 import Topbar from '@/components/Layout/Topbar'
+import Footer from '@/components/Layout/Footer'
 
 const geistSans = Geist({
    variable: '--font-geist-sans',
@@ -53,9 +54,12 @@ export default function RootLayout({
    return (
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${jakartaSans.variable} h-full antialiased`}>
          {/* <body className="min-h-full flex flex-col">{children}</body> */}
-         <body className={`antialiased`}>
+         <body className={`${jakartaSans.className} antialiased min-h-screen flex flex-col`}>
             <Topbar menu={menu} />
-            <PrimeReactContainer>{children}</PrimeReactContainer>
+            <main className="flex-1 pt-20 md:pt-24">
+               <PrimeReactContainer>{children}</PrimeReactContainer>
+            </main>
+            <Footer />
          </body>
       </html>
    )

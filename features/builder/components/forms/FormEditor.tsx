@@ -13,6 +13,7 @@ import { setTheme } from '@/store/reducers/builder/builder.slice'
 import Container from '../shared/Container'
 import PersonalInfo from '../features/PersonalInfo'
 import ResumeCategory from '../features/ResumeCategory'
+import ATSScoreIndicator from '../shared/ATSScoreIndicator'
 // import PersonalInfo from '../features/PersonalInfo'
 // import ResumeCategory from '../features/ResumeCategory'
 
@@ -48,6 +49,9 @@ const FormEditor = () => {
 
    return (
       <Container label="Design & Personal Info">
+         <div className="mb-6">
+            <ATSScoreIndicator />
+         </div>
          <FormProvider {...RHF}>
             <div className="py-4">
                <div>Resume Style</div>
@@ -172,54 +176,6 @@ const FormEditor = () => {
                showClear={false}
                placeholder="Select Text Scale"
             />
-            {/* <div className="py-4">
-               <div>Typography</div>
-            </div>
-            <FieldSelect
-               name="p_typ_name"
-               label="Name Typography"
-               options={options.typography.map((item) => {
-                  return {
-                     label: validateTypographyLabel(item) || '',
-                     value: item,
-                  }
-               })}
-               search={false}
-               onChange={(e: any) => {
-                  dispatch(setTheme({ ...theme, typography: { ...theme?.typography, name: e?.value } }))
-               }}
-               placeholder="Select Name Typography"
-            />
-            <FieldSelect
-               name="p_typ_headers"
-               label="Headers Typography"
-               options={options.typography.map((item) => {
-                  return {
-                     label: validateTypographyLabel(item) || '',
-                     value: item,
-                  }
-               })}
-               search={false}
-               onChange={(e: any) => {
-                  dispatch(setTheme({ ...theme, typography: { ...theme?.typography, headers: e?.value } }))
-               }}
-               placeholder="Select Headers Typography"
-            />
-            <FieldSelect
-               name="p_typ_body"
-               label="Body Typography"
-               options={options.typography.map((item) => {
-                  return {
-                     label: validateTypographyLabel(item) || '',
-                     value: item,
-                  }
-               })}
-               search={false}
-               onChange={(e: any) => {
-                  dispatch(setTheme({ ...theme, typography: { ...theme?.typography, body: e?.value } }))
-               }}
-               placeholder="Select Body Typography"
-            /> */}
          </FormProvider>
          <PersonalInfo />
          <ResumeCategory />

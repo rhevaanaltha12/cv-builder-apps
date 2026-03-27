@@ -1,21 +1,6 @@
 import { generateId } from '@/lib/method'
 import { ISection, ISectionItem, ISectionType, ISectionTypeFontSize, ITemplateType, ITypographySettings } from './interfaces'
-import {
-   BookOpen,
-   Code,
-   Type,
-   Zap,
-   Grid3X3,
-   Layout,
-   Building2,
-   Sparkles,
-   Pen,
-   FolderKanban,
-   Award,
-   BadgeCheck,
-   Briefcase,
-   GraduationCap,
-} from 'lucide-react'
+import { BookOpen, Code, Type, FolderKanban, Award, BadgeCheck, Briefcase, GraduationCap } from 'lucide-react'
 
 export const DEFAULT_SECTION_FONT_SIZE: ISectionTypeFontSize = {
    heading: 'lg',
@@ -180,6 +165,22 @@ export const DUMMY_DATA = {
          skillList: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'SQL', 'Git', 'AWS', 'Docker', 'Agile'],
       },
    ],
+   certifications: [
+      {
+         id: 'dummy-cert-1',
+         title: 'AWS Certified Solutions Architect',
+         subtitle: 'Amazon Web Services',
+         startDate: '2023-01',
+         description: '• Verified expertise in designing and deploying scalable systems on AWS <br>• Comprehensive knowledge of AWS Cloud infrastructure and services',
+      },
+      {
+         id: 'dummy-cert-2',
+         title: 'Professional Scrum Master I',
+         subtitle: 'Scrum.org',
+         startDate: '2022-06',
+         description: '• Demonstrated fundamental level of Scrum mastery <br>• Understanding of the Scrum framework and how to apply it',
+      },
+   ],
 }
 
 export const LINK_ICONS = {
@@ -237,7 +238,7 @@ export const createSectionItem = (type: ISectionType, fieldDefinitions?: any[]):
       case 'projects':
          return { ...baseItem, title: '', subtitle: '', startDate: '', endDate: '', description: '' }
       case 'certifications':
-         return { ...baseItem, title: '', subtitle: '', startDate: '' }
+         return { ...baseItem, title: '', subtitle: '', startDate: '', description: '' }
       // case 'custom':
       //    // Initialize custom fields based on field definitions
       //    const customFields: ICustomFieldValue[] =
@@ -269,32 +270,6 @@ export const createSection = (type: ISectionType, template?: any): ISection => {
       items: type === 'skills' ? [createSectionItem(type)] : [],
       fontSize: { ...DEFAULT_SECTION_FONT_SIZE },
    }
-
-   // // Add field definitions for custom sections and built-in types that use CustomSectionForm
-   // if (type === 'certifications') {
-   //    baseSection.fieldDefinitions = CUSTOM_FIELD_TEMPLATES.certification.map((f) => ({
-   //       ...f,
-   //       id: generateId(),
-   //    }))
-   // } else if (type === 'projects') {
-   //    baseSection.fieldDefinitions = CUSTOM_FIELD_TEMPLATES.project.map((f) => ({
-   //       ...f,
-   //       id: generateId(),
-   //    }))
-   // } else if (type === 'custom' && template) {
-   //    const templateFields = CUSTOM_FIELD_TEMPLATES[template]
-   //    baseSection.fieldDefinitions = templateFields.map((f) => ({
-   //       ...f,
-   //       id: generateId(),
-   //    }))
-   //    baseSection.title = template.charAt(0).toUpperCase() + template.slice(1)
-   // } else if (type === 'custom') {
-   //    // Default basic template
-   //    baseSection.fieldDefinitions = CUSTOM_FIELD_TEMPLATES.basic.map((f) => ({
-   //       ...f,
-   //       id: generateId(),
-   //    }))
-   // }
 
    return baseSection
 }

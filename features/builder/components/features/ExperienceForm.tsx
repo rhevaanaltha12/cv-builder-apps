@@ -9,15 +9,15 @@ import Button from '@/components/Button'
 import FieldDatePicker from '@/components/Form/FieldDatePicker'
 import FieldCheckbox from '@/components/Form/FieldCheckbox'
 import { dateToFormat } from '@/lib/date'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Editor } from 'primereact/editor'
+import AIActionButton from '../shared/AIActionButton'
 
 interface IForm {
    p_section: ISectionItem[]
 }
 
 const ExperienceForm: React.FC<{ section: ISection }> = ({ section }) => {
-   const [text, setText] = useState('')
    const dispatch = useAppDispatch()
    const { personalInfo, sections } = useAppSelector((state) => state.builderReducer)
 
@@ -134,9 +134,20 @@ const ExperienceForm: React.FC<{ section: ISection }> = ({ section }) => {
                         }}
                         label="Currently Working Here"
                      />
+                     <div className="flex justify-between items-center py-2 mt-4">
+                        <div className="text-sm font-medium">Job Description</div>
+                        <AIActionButton
+                           label="Optimize with AI"
+                           prompt={`Improve the following job description bullet points to be more impactful and result-oriented for a ${item.position} at ${item.company}: ${item.description}`}
+                           systemPrompt="You are an expert resume optimizer. Rewrite the provided text as impactful bullet points using action verbs and the STAR method (Situation, Task, Action, Result) where possible. Return ONLY the HTML formatted bullet points (using <ul> and <li> tags)."
+                           onSuccess={(response) => {
+                              onSectionChange({ htmlValue: response }, section.id, 'description', idx)
+                           }}
+                        />
+                     </div>
                      <div className="card">
                         <Editor
-                           value={text}
+                           value={item.description || ''}
                            onTextChange={(e: any) => onSectionChange(e, section.id, 'description', idx)}
                            style={{ height: '180px' }}
                         />
@@ -160,7 +171,6 @@ const ExperienceForm: React.FC<{ section: ISection }> = ({ section }) => {
                label="Add Experience"
                icon={'pi-plus'}
                iconType="prime"
-               // className="w-full"
                size="sm"
                variant="stroke"
                onClick={() => dispatch(addNewSection(section.id))}

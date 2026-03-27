@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { setPersonalInfo } from '@/store/reducers/builder/builder.slice'
 import FieldTextArea from '@/components/Form/FieldTextArea'
 import FieldChip from '@/components/Form/FieldChip'
+import AIActionButton from '../shared/AIActionButton'
 
 interface IForm {
    p_fullname: string
@@ -96,10 +97,21 @@ const PersonalInfo = () => {
                onChange={(e: any) => onChange(e, 'tagline')}
             />
          </div>
+         <div className="flex justify-between items-center py-2 mt-4">
+            <div className="text-sm font-medium">Professional Summary</div>
+            <AIActionButton
+               label="Generate Summary"
+               prompt={`Generate a professional resume summary for a ${RHF.getValues('p_job_title') || 'professional'}. Keep it concise (2-3 sentences) and impactful.`}
+               onSuccess={(response: string) => {
+                  RHF.setValue('p_job_title', response)
+                  onChange({ value: response }, 'summary')
+               }}
+            />
+         </div>
          <FieldTextArea
             label="Job Description"
             name="p_job_title"
-            placeholder="Input Job Description"
+            placeholder="Input Professional Summary"
             onChange={(e: any) => onChange(e, 'summary')}
          />
          <div className="grid grid-cols-2 gap-x-4">

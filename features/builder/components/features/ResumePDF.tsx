@@ -1,5 +1,5 @@
 import { formatDate } from '@/lib/method'
-import { DEFAULT_TYPOGRAPHY, GLOBAL_FONT_SCALES, TEMPLATE_FONTS } from '../../config/constant'
+import { GLOBAL_FONT_SCALES, TEMPLATE_FONTS } from '../../config/constant'
 import { IResumeData, ISection, ISkill, ITemplateType } from '../../config/interfaces'
 import { Document, Page, Text, View, StyleSheet, Link, pdf } from '@react-pdf/renderer'
 import type { Style } from '@react-pdf/types'
@@ -10,7 +10,6 @@ const getTemplateFont = (template: ITemplateType): string => {
 }
 
 const getFontSizes = (data: IResumeData) => {
-   const typography = data.theme.typography || DEFAULT_TYPOGRAPHY
    const scale = GLOBAL_FONT_SCALES[data.theme.fontSize] || 1
 
    return {
@@ -30,7 +29,7 @@ const getPageStyles = (template: ITemplateType) => {
    const fontFamily = getTemplateFont(template)
    return StyleSheet.create({
       page: {
-         padding: 0,
+         padding: 32,
          fontSize: 10,
          fontFamily: fontFamily,
          lineHeight: 1.4,
@@ -660,7 +659,7 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                   {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
                   {realItems.length > 0 ? (
                      realItems.map((item) => (
-                        <View key={item.id} style={{ marginBottom: 10 }}>
+                        <View key={item.id} style={{ marginBottom: 10 }} wrap={false}>
                            <View
                               style={{
                                  flexDirection: 'row',
@@ -720,7 +719,7 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                   {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
                   {realItems.length > 0 ? (
                      realItems.map((item) => (
-                        <View key={item.id} style={{ marginBottom: 10 }}>
+                        <View key={item.id} style={{ marginBottom: 10 }} wrap={false}>
                            <View
                               style={{
                                  flexDirection: 'row',
@@ -776,35 +775,24 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
          // ── SKILLS ───────────────────────────────────────────────────────────────
          case 'skills':
             return (
-               <View style={baseStyles.section} key={section.id}>
+               <View style={baseStyles.section} key={section.id} wrap={false}>
                   {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
                   {renderFullSkillsSection(data, section, template, color) || <View style={{ height: 20 }} />}
                </View>
             )
 
          // ── PROJECTS ─────────────────────────────────────────────────────────────
-         // Mirrors ProjectSection.tsx: projectName as title, projectUrl as link,
-         // projectSkills as tags, description as rich text
          case 'projects':
             return (
                <View style={baseStyles.section} key={section.id}>
                   {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
                   {realItems.map((item) => {
-                     // Per-template link colour — matches ProjectSection.tsx:
-                     //   Harvard → neutral gray (no accent on links)
-                     //   Tech / Minimal → theme accent colour
                      const linkColor = template === 'harvard' ? colors.title : color
-
-                     // Per-template tag colour — mirrors ProjectSection.tsx tag nodes:
-                     // Harvard and Minimal both use muted gray; Tech uses accent
                      const tagColor = template === 'tech' ? color : '#6b7280'
-
-                     // Per-template description colour
                      const descColor = template === 'harvard' ? '#6b7280' : '#4b5563'
 
                      return (
-                        <View key={item.id} style={{ marginBottom: 10 }}>
-                           {/* Row: project name / link  +  date */}
+                        <View key={item.id} style={{ marginBottom: 10 }} wrap={false}>
                            <View
                               style={{
                                  flexDirection: 'row',
@@ -846,14 +834,12 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                               )}
                            </View>
 
-                           {/* Tech skills / tags — dot-separated, template-aware colour */}
                            {item.projectSkills && item.projectSkills.length > 0 && (
                               <Text style={{ fontSize: fontSize.itemBody - 1, color: tagColor, marginBottom: 2 }}>
                                  {item.projectSkills.join(' · ')}
                               </Text>
                            )}
 
-                           {/* Description — template-aware colour */}
                            {item.description && (
                               <PDFRichText
                                  text={item.description}
@@ -869,13 +855,74 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
                </View>
             )
 
-         // ── CERTIFICATIONS & CUSTOM ───────────────────────────────────────────────
+         // ── CERTIFICATIONS ───────────────────────────────────────────────────────
+         case 'certifications':
+            return (
+               <View style={baseStyles.section} key={section.id}>
+                  {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
+                  {realItems.map((item) => {
+                     const isHarvardTemplate = template === 'harvard'
+                     const applyThemeSubtitleColor = !isHarvardTemplate
+
+                     return (
+                        <View key={item.id} style={{ marginBottom: 10 }} wrap={false}>
+                           <View
+                              style={{
+                                 flexDirection: 'row',
+                                 justifyContent: 'space-between',
+                                 alignItems: 'flex-start',
+                                 marginBottom: 1,
+                              }}
+                           >
+                              <Text style={{ flex: 1, fontSize: fontSize.itemTitle, fontWeight: 'bold', color: colors.title }}>
+                                 {item.title || ''}
+                              </Text>
+                              {item.startDate && (
+                                 <Text
+                                    style={{
+                                       fontSize: fontSize.itemDate,
+                                       color: colors.date,
+                                       fontStyle: 'italic',
+                                       marginLeft: 8,
+                                    }}
+                                 >
+                                    {formatDate(item.startDate, item.endDate)}
+                                 </Text>
+                              )}
+                           </View>
+                           {item.subtitle && (
+                              <Text
+                                 style={{
+                                    fontSize: fontSize.itemSubtitle,
+                                    color: applyThemeSubtitleColor ? color : colors.subtitle,
+                                    marginBottom: 1,
+                                 }}
+                              >
+                                 {item.subtitle}
+                              </Text>
+                           )}
+                           {item.description && (
+                              <PDFRichText
+                                 text={item.description}
+                                 fontSize={fontSize.itemBody}
+                                 color="#4b5563"
+                                 themeColor={color}
+                                 style={{ marginTop: 2 }}
+                              />
+                           )}
+                        </View>
+                     )
+                  })}
+               </View>
+            )
+
+         // ── CUSTOM SECTION ──────────────────────────────────────────────────────
          default:
             return (
                <View style={baseStyles.section} key={section.id}>
                   {renderSectionTitle(section.title, template, color, fontSize.sectionHeading)}
                   {realItems.map((item) => (
-                     <View key={item.id} style={{ marginBottom: 8 }}>
+                     <View key={item.id} style={{ marginBottom: 8 }} wrap={false}>
                         <View
                            style={{
                               flexDirection: 'row',
@@ -920,7 +967,7 @@ const ResumePDF: React.FC<ResumePDFProps> = ({ data, template }) => {
    // STANDARD LAYOUT (Harvard, Tech, Minimal, Bold, Neo)
    // =====================================================
    const renderStandardLayout = () => (
-      <View style={{ padding: 32 }}>
+      <View>
          {renderHeader()}
          {data.sections.map((section) => renderSectionLocal(section))}
       </View>

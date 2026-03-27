@@ -157,10 +157,9 @@ const ProjectForm: React.FC<{ section: ISection }> = ({ section }) => {
             ))}
 
             <Button
-               label="Add Education"
+               label="Add Project"
                icon={'pi-plus'}
                iconType="prime"
-               // className="w-full"
                size="sm"
                variant="stroke"
                onClick={() => dispatch(addNewSection(section.id))}

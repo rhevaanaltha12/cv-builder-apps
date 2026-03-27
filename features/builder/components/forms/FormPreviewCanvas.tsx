@@ -3,11 +3,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DEFAULT_TYPOGRAPHY, GLOBAL_FONT_SCALES, options, PAGE_SIZES, TYPOGRAPHY_PX } from '../../config/constant'
 import { setGlobalFontSize, setTemplate } from '@/store/reducers/builder/builder.slice'
 import { cn } from '@/lib/utils'
-import { Eye, ZoomOut, ZoomIn, RotateCcw } from 'lucide-react'
+import { Eye, ZoomOut, ZoomIn, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
 import Button from '@/components/Button'
 import DefaultLayout from '../features/layout/DefaultLayout'
 import { useReactToPrint } from 'react-to-print'
 import { downloadPDF, exportToPDF } from '../features/ResumePDF'
+import { downloadJSON, transformToJSONResume } from '@/lib/export-utils'
 
 const FormPreviewCanvas = () => {
    const dispatch = useAppDispatch()
@@ -49,33 +50,20 @@ const FormPreviewCanvas = () => {
       }),
       [typography, scale]
    )
-   //    const fontSize = useMemo(
-   //       () => ({
-   //          name: Math.round(TYPOGRAPHY_PX[typography.name].name * scale),
-   //          summary: Math.round(TYPOGRAPHY_PX[typography.headers].headers * scale),
-   //          contact: Math.round(TYPOGRAPHY_PX[typography.body].body * scale),
-   //          sectionHeading: Math.round(14 * scale),
-   //          itemTitle: Math.round(13 * scale),
-   //          itemSubtitle: Math.round(11 * scale),
-   //          itemBody: Math.round(10 * scale),
-   //          itemDate: Math.round(9 * scale),
-   //       }),
-   //       [typography, scale]
-   //    )
-
-   const pageHeightPx = 842
 
    // Calculate page breaks
-   //    useEffect(() => {
-   //       if (contentRef.current) {
-   //          const contentHeight = contentRef.current.scrollHeight
-   //          const pages = Math.max(1, Math.ceil(contentHeight / pageHeightPx))
-   //          setPageCount(pages)
-   //          if (currentPage >= pages) {
-   //             setCurrentPage(Math.max(0, pages - 1))
-   //          }
-   //       }
-   //    }, [sections, personalInfo, theme, currentPage])
+   useEffect(() => {
+      if (contentRef.current) {
+         const contentHeight = contentRef.current.scrollHeight
+         const pageHeight = contentRef.current.parentElement?.offsetHeight || 842
+         const pages = Math.max(1, Math.ceil(contentHeight / pageHeight))
+         setPageCount(pages)
+
+         if (currentPage >= pages) {
+            setCurrentPage(Math.max(0, pages - 1))
+         }
+      }
+   }, [sections, personalInfo, theme, currentPage])
 
    // Zoom controls
    const handleZoomIn = () => setZoom(Math.min(zoom + 0.25, 3))
@@ -110,13 +98,21 @@ const FormPreviewCanvas = () => {
       }
    }
 
+   const handleNextPage = (e: React.MouseEvent) => {
+      e.stopPropagation()
+      if (currentPage < pageCount - 1) {
+         setCurrentPage(currentPage + 1)
+      }
+   }
+
+   const handlePrevPage = (e: React.MouseEvent) => {
+      e.stopPropagation()
+      if (currentPage > 0) {
+         setCurrentPage(currentPage - 1)
+      }
+   }
+
    const renderLayout = () => {
-      //   if (isPortfolio) return renderPortfolioLayout(visibleSections)
-      //   if (isCorporate) return renderCorporateLayout(contentRef, visibleSections)
-      //   if (isCreative) return renderCreativeLayout(contentRef, visibleSections)
-      //   if (isElegant) return renderElegantLayout(contentRef, visibleSections)
-      //   if (isModern) return renderModernLayout(contentRef, visibleSections)
-      //   return renderStandartLayout(contentRef, visibleSections)
       return <DefaultLayout ref={contentRef} />
    }
 
@@ -124,7 +120,7 @@ const FormPreviewCanvas = () => {
       setIsExporting(true)
       try {
          const blob = await exportToPDF({ personalInfo, theme, sections })
-         const filename = personalInfo.fullName ? personalInfo.fullName.replace(/\s+/g, '_') + '_Resume.pdf' : 'Resume.pdf'
+         const filename = personalInfo.fullName ? personalInfo.fullName.replaceAll(/\s+/g, '_') + '_Resume.pdf' : 'Resume.pdf'
          downloadPDF(blob, filename)
       } catch (error) {
          console.error('Export failed:', error)
@@ -132,52 +128,6 @@ const FormPreviewCanvas = () => {
          setIsExporting(false)
       }
    }, [sections, personalInfo, theme])
-
-   const handlePrint = useReactToPrint({
-      contentRef, // ← still correct
-
-      documentTitle: `${personalInfo?.fullName || 'Resume'}_${new Date().toISOString().slice(0, 10)}`,
-
-      pageStyle: `
-      @page {
-         size: A4 portrait;
-         margin: 0;
-      }
-      @media print {
-         body {
-            margin: 0 !important;
-            padding: 0 !important;
-         }
-      }
-   `,
-
-      // This replaces onBeforeGetContent in v3.x
-      onBeforePrint: () => {
-         // Reset zoom & pan so the printed version looks clean (no transform/scale artifacts)
-         setZoom(1)
-         setPan({ x: 0, y: 0 })
-
-         // Because setZoom/setPan are async (batched), return a Promise to wait for re-render
-         return new Promise<void>((resolve) => {
-            // Small timeout or use a state flag + useEffect to detect render completion
-            setTimeout(() => {
-               resolve()
-            }, 300) // ← 300–600 ms is usually enough for React to re-render
-         })
-      },
-
-      // Optional: control iframe lifecycle (recommended)
-      preserveAfterPrint: false, // default = false → auto-remove iframe after print dialog closes
-
-      // Helpful for debugging
-      onAfterPrint: () => {
-         console.log('Print dialog closed')
-      },
-
-      onPrintError: (errorLocation, error) => {
-         console.error('Print error:', errorLocation, error)
-      },
-   })
 
    useEffect(() => {
       dispatch(
@@ -189,6 +139,12 @@ const FormPreviewCanvas = () => {
       )
    }, [theme.template])
 
+   const handleExportJSON = useCallback(() => {
+      const jsonResume = transformToJSONResume(personalInfo, sections)
+      const filename = personalInfo.fullName ? personalInfo.fullName.replaceAll(/\s+/g, '_') + '_Resume.json' : 'Resume.json'
+      downloadJSON(jsonResume, filename)
+   }, [personalInfo, sections])
+
    useEffect(() => {
       if (fontSize) {
          dispatch(setGlobalFontSize(fontSize))
@@ -196,7 +152,7 @@ const FormPreviewCanvas = () => {
    }, [fontSize])
 
    return (
-      <div className="c-canvas-preview bg-white rounded-md shadow-md borde border-l-none border-t-4 border-t-sky-600 sticky top-4 overflow-hidden h-[calc(100vh-9rem)]">
+      <div className="c-canvas-preview bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 sticky top-4 overflow-hidden h-[calc(100vh-9rem)] flex flex-col transition-all duration-300">
          <div className="flex items-center justify-between p-4 border border-b-gray-200">
             <div>
                <div className="flex items-center gap-2">
@@ -207,29 +163,69 @@ const FormPreviewCanvas = () => {
                   {options.pageFormat.find((item) => item?.value === theme.pageSize)?.label}
                </p>
             </div>
-            <Button
-               label="Export PDF"
-               size="sm"
-               icon={'pi-download'}
-               iconType="prime"
-               variant="stroke"
-               onClick={handleExport}
-               //    isLoading={isExporting}
-            />
+            <div className="flex gap-2">
+               <Button
+                  label="JSON"
+                  size="sm"
+                  icon={'pi-code'}
+                  iconType="prime"
+                  variant="stroke"
+                  onClick={handleExportJSON}
+                  theme="normal"
+               />
+               <Button
+                  label="Export PDF"
+                  size="sm"
+                  icon={'pi-download'}
+                  iconType="prime"
+                  variant="solid"
+                  onClick={handleExport}
+                  isLoading={isExporting}
+                  theme="primary"
+               />
+            </div>
          </div>
-         <div className="flex items-center gap-1 justify-center p-2 border border-b-gray-200">
-            <button onClick={handleZoomOut} className="p-1.5 hover:bg-muted rounded-none transition-colors" title="Zoom Out">
-               <ZoomOut className="w-4 h-4 text-muted-foreground" />
-            </button>
-            <span className="text-xs font-medium text-muted-foreground w-12 text-center">{Math.round(zoom * 100)}%</span>
-            <button onClick={handleZoomIn} className="p-1.5 hover:bg-muted rounded-none transition-colors" title="Zoom In">
-               <ZoomIn className="w-4 h-4 text-muted-foreground" />
-            </button>
-            <button onClick={handleReset} className="p-1.5 hover:bg-muted rounded-none transition-colors ml-1" title="Reset View">
-               <RotateCcw className="w-4 h-4 text-muted-foreground" />
-            </button>
+         <div className="flex items-center justify-between px-4 py-2 border border-b-gray-200 bg-white z-10">
+            <div className="flex items-center gap-1">
+               <button onClick={handleZoomOut} className="p-1.5 hover:bg-muted rounded-md transition-colors" title="Zoom Out">
+                  <ZoomOut className="w-4 h-4 text-muted-foreground" />
+               </button>
+               <span className="text-xs font-medium text-muted-foreground w-12 text-center">{Math.round(zoom * 100)}%</span>
+               <button onClick={handleZoomIn} className="p-1.5 hover:bg-muted rounded-md transition-colors" title="Zoom In">
+                  <ZoomIn className="w-4 h-4 text-muted-foreground" />
+               </button>
+               <button
+                  onClick={handleReset}
+                  className="p-1.5 hover:bg-muted rounded-md transition-colors ml-1"
+                  title="Reset View"
+               >
+                  <RotateCcw className="w-4 h-4 text-muted-foreground" />
+               </button>
+            </div>
+
+            {pageCount > 1 && (
+               <div className="flex items-center gap-2">
+                  <button
+                     onClick={handlePrevPage}
+                     disabled={currentPage === 0}
+                     className="p-1 hover:bg-muted disabled:opacity-30 rounded-md transition-colors"
+                  >
+                     <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                  <span className="text-xs font-medium text-muted-foreground">
+                     Page {currentPage + 1} of {pageCount}
+                  </span>
+                  <button
+                     onClick={handleNextPage}
+                     disabled={currentPage === pageCount - 1}
+                     className="p-1 hover:bg-muted disabled:opacity-30 rounded-md transition-colors"
+                  >
+                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  </button>
+               </div>
+            )}
          </div>
-         {/* <div className="border border-t-2 border-t-gray-500/10 mb-3"></div> */}
+
          <div
             ref={containerRef}
             className={cn('flex-1 overflow-hidden p-4 cursor-grab select-none bg-gray-50', isPanning && 'cursor-grabbing')}
@@ -240,7 +236,10 @@ const FormPreviewCanvas = () => {
             onWheel={handleWheel}
          >
             <div
-               className="mx-auto border border-border shadow-sm overflow-hidden origin-center transition-transform duration-75"
+               className={cn(
+                  'mx-auto border border-border shadow-sm overflow-hidden origin-center transition-transform',
+                  !isPanning && 'duration-75'
+               )}
                style={{
                   width: '100%',
                   maxWidth: '595px',
@@ -249,7 +248,12 @@ const FormPreviewCanvas = () => {
                   backgroundColor: '#ffffff',
                }}
             >
-               <div ref={componentRef} id="print-content" className="w-full h-full">
+               <div
+                  ref={componentRef}
+                  id="print-content"
+                  className="w-full h-full transition-transform duration-300 ease-in-out"
+                  style={{ transform: `translateY(-${currentPage * 100}%)` }}
+               >
                   {renderLayout()}
                </div>
             </div>

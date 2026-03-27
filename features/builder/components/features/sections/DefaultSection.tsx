@@ -4,6 +4,7 @@ import React from 'react'
 import ExperienceEducationSection from './ExperienceEducationSection'
 import SkillsSection from './SkillsSection'
 import ProjectSection from './ProjectSection'
+import CertificationSection from './CertificationSection'
 
 const DefaultSection = ({ section }: { section: ISection }) => {
    const {
@@ -15,7 +16,8 @@ const DefaultSection = ({ section }: { section: ISection }) => {
          return <SkillsSection section={section} />
       case 'projects':
          return <ProjectSection section={section} />
-
+      case 'certifications':
+         return <CertificationSection section={section} />
       default:
          return <ExperienceEducationSection section={section} />
    }

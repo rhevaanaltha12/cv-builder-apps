@@ -1,6 +1,5 @@
 'use client'
 import { cn } from '@/lib/utils'
-import { Eye } from 'lucide-react'
 import React, { useState } from 'react'
 
 interface IProps {
@@ -19,22 +18,48 @@ const Container = (props: IProps) => {
    }
 
    return (
-      <div className={cn('c-form-container bg-white rounded-md shadow-md border border-t-4 border-t-sky-600 mb-2 ', className)}>
-         <div className={cn(showCollapseBtn ? 'flex items-center justify-between' : '')}>
-            <h5 className="font-medium p-4">{label}</h5>
+      <div
+         className={cn(
+            'c-form-container bg-white/70 backdrop-blur-md rounded-2xl shadow-sm border border-white/40 mb-4 transition-all duration-300 hover:shadow-md',
+            className
+         )}
+      >
+         <div
+            className={cn(
+               'flex items-center justify-between p-5 cursor-pointer select-none',
+               showCollapseBtn && 'hover:bg-sky-50/30'
+            )}
+            onClick={showCollapseBtn ? handleClick : undefined}
+            onKeyDown={(e) => {
+               if (showCollapseBtn && (e.key === 'Enter' || e.key === ' ')) {
+                  handleClick()
+               }
+            }}
+            role={showCollapseBtn ? 'button' : undefined}
+            tabIndex={showCollapseBtn ? 0 : undefined}
+            aria-expanded={showCollapseBtn ? !collapse : undefined}
+         >
+            <h5 className="font-semibold text-gray-800 tracking-tight">{label}</h5>
 
             {showCollapseBtn && (
-               <button
-                  type="button"
-                  onClick={handleClick}
-                  className="w-8 h-8 hover:bg-gray-200 rounded-[50%] mr-4 cursor-pointer"
-               >
-                  <i className={`pi-angle-${collapse ? 'down' : 'up'} pi`}></i>
-               </button>
+               <div className="flex items-center gap-2">
+                  <div
+                     className={cn(
+                        'w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200',
+                        collapse ? 'bg-sky-100 text-sky-600' : 'bg-gray-100 text-gray-500'
+                     )}
+                  >
+                     <i className={`pi pi-chevron-${collapse ? 'down' : 'up'} text-xs`}></i>
+                  </div>
+               </div>
             )}
          </div>
-         <div className={cn('border border-t-2 border-t-gray-500/10 mx-3', collapse ? 'hidden' : '')}></div>
-         <div className={cn('p-4', collapse ? 'hidden' : '')}>{children}</div>
+         {!collapse && (
+            <>
+               <div className="h-px bg-linear-to-r from-transparent via-gray-200 to-transparent mx-5"></div>
+               <div className="p-6 pt-4 animate-in fade-in slide-in-from-top-2 duration-300">{children}</div>
+            </>
+         )}
       </div>
    )
 }

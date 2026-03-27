@@ -2,10 +2,8 @@ import { useAppDispatch, useAppSelector } from '@/store/hook'
 import { setSection } from '@/store/reducers/builder/builder.slice'
 import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { FileText } from 'lucide-react'
 import React, { useCallback, useEffect } from 'react'
 import SectionContainer from '../shared/SectionContainer'
-import { ISectionType } from '../../config/interfaces'
 import ExperienceForm from '../features/ExperienceForm'
 import EducationForm from '../features/EducationForm'
 import SkillsForm from '../features/SkillsForm'
@@ -18,10 +16,11 @@ import ProjectForm from '../features/ProjectForm'
 // import SkillsForm from '../features/SkillsForm'
 // import CustomSectionForm from '../features/CustomSectionForm'
 // import ProjectForm from '../features/ProjectForm'
+import CertificationForm from '../features/CertificationForm'
 
 const FormResumeCategory = () => {
    const dispatch = useAppDispatch()
-   const { personalInfo, sections } = useAppSelector((state) => state.builderReducer)
+   const { sections } = useAppSelector((state) => state.builderReducer)
 
    const sensors = useSensors(
       useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -38,6 +37,8 @@ const FormResumeCategory = () => {
             return <SkillsForm section={section} />
          case 'projects':
             return <ProjectForm section={section} />
+         case 'certifications':
+            return <CertificationForm section={section} />
          default:
             return <ExperienceForm section={section} />
       }

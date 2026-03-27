@@ -15,7 +15,7 @@ const NavLink = (props: IProps) => {
       <Link
          href={props.url}
          className={cn(
-            'py-2 px-4 rounded-md font-medium text-gray-600',
+            'py-2 px-4 rounded-full font-medium text-gray-600 transition-all duration-200',
             'hover:bg-sky-500/10 hover:text-sky-700!',
             pathname === props.url && 'bg-sky-500/10 text-sky-700!'
          )}
